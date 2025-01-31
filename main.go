@@ -2,7 +2,6 @@ package main
 
 import (
 	"demo/src/database"
-	orderDeps "demo/src/orders/dependencies"
 	productDeps "demo/src/products/dependencies"
 	"log"
 
@@ -18,11 +17,8 @@ func main() {
 
 	r := gin.Default()
 
-	
 	productsDeps := productDeps.NewProductsDependencies(db)
 	productsDeps.Execute(r)
-	
-	ordersDeps := orderDeps.NewOrdersDependencies(db)
-	ordersDeps.Execute(r)
+
 	r.Run(":8080")
 }
