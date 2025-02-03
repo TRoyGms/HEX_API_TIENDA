@@ -11,5 +11,5 @@ func NewDeleteServiceUseCase(serviceRepo domain.IServiceRepository) *DeleteServi
 }
 
 func (u *DeleteServiceUseCase) Execute(serviceID int) error {
-	return u.serviceRepo.Delete(serviceID)
+	return u.serviceRepo.DeleteById(serviceID)
 }

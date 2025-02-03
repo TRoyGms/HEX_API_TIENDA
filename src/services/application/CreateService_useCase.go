@@ -14,5 +14,6 @@ func NewCreateServiceUseCase(serviceRepo domain.IServiceRepository) *CreateServi
 }
 
 func (u *CreateServiceUseCase) Execute(service *entities.Service) error {
-	return u.serviceRepo.Create(service)
+	_, err := u.serviceRepo.Save(service)
+	return err
 }

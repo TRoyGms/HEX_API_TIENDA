@@ -15,7 +15,6 @@ func NewServiceRepository(db *sql.DB) *ServiceRepository {
 	return &ServiceRepository{DB: db}
 }
 
-// Guardar un nuevo servicio y devolver su ID
 func (repo *ServiceRepository) Save(service *entities.Service) (int, error) {
 	query := "INSERT INTO services (name, price) VALUES (?, ?)"
 	result, err := repo.DB.Exec(query, service.Name, service.Price)
@@ -35,7 +34,7 @@ func (repo *ServiceRepository) Save(service *entities.Service) (int, error) {
 }
 
 // Obtener todos los servicios
-func (repo *ServiceRepository) GetAll() ([]entities.Service, error) {
+func (repo *ServiceRepository) GetAll() ([]*entities.Service, error) {
 	query := "SELECT id, name, price FROM services"
 	rows, err := repo.DB.Query(query)
 	if err != nil {
@@ -44,14 +43,15 @@ func (repo *ServiceRepository) GetAll() ([]entities.Service, error) {
 	}
 	defer rows.Close()
 
-	var services []entities.Service
+	var services []*entities.Service // Change to a slice of pointers
 	for rows.Next() {
 		var service entities.Service
 		if err := rows.Scan(&service.ID, &service.Name, &service.Price); err != nil {
 			log.Printf("[ServiceRepository.GetAll] Error scanning row: %v", err)
 			return nil, err
 		}
-		services = append(services, service)
+		// Append a pointer to the service
+		services = append(services, &service)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -124,4 +124,20 @@ func (repo *ServiceRepository) EditById(id int, updatedService *entities.Service
 	}
 
 	return nil
+}
+
+func (repo *ServiceRepository) GetByID(id int) (*entities.Service, error) {
+	query := "SELECT id, name, price FROM services WHERE id = ?"
+	row := repo.DB.QueryRow(query, id)
+
+	var service entities.Service
+	if err := row.Scan(&service.ID, &service.Name, &service.Price); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		log.Printf("[ServiceRepository.GetByID] Error scanning row: %v", err)
+		return nil, err
+	}
+
+	return &service, nil
 }

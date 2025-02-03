@@ -31,7 +31,7 @@ func (d *ProductsDependencies) Execute(r *gin.Engine) {
 	getAllProductController := productInfra.NewGetAllProductsController(*getAllProductUseCase)
 
 	updateProductsByIDUseCase := application.NewEditProduct(*productRepository)
-	updateProductsByIDController := productInfra.NewUpdateProductByIDController(*updateProductsByIDUseCase)
+	updateProductsByIDController := productInfra.NewUpdateProductByIDController(updateProductsByIDUseCase)
 
 	productRouters.AttachProductRoutes(
 		r,

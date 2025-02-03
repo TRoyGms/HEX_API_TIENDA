@@ -16,8 +16,8 @@ func AttachProductRoutes(
 	productsGroup := r.Group("/products")
 	{
 		productsGroup.POST("", createProductController.Execute)
-		productsGroup.DELETE("", deleteProductByIDController.Execute)
+		productsGroup.DELETE("/:id", deleteProductByIDController.Execute)
 		productsGroup.GET("", getAllProductsController.Execute)
-		productsGroup.PUT("", updateProductByIdController.Execute)
+		productsGroup.PUT("/:id", updateProductByIdController.Execute)
 	}
 }
