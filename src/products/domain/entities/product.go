@@ -1,7 +1,7 @@
 package entities
 
 type Product struct {
-	Id    int32
+	Id    int
 	Name  string
 	Price float32
 }

@@ -4,44 +4,50 @@ import (
 	"demo/src/products/application"
 	"demo/src/products/domain/entities"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type UpdateProductByIDController struct {
-	up application.EditProduct
+	editProductUseCase *application.EditProduct
 }
 
-type UpdateProductRequest struct {
-	Id  int32  `json:"id" binding:"required"` 
-	Name  string  `json:"name" binding:"required"` 
-	Price float32 `json:"price" binding:"required"` 
-}
-
-func NewUpdateProductByIDController(up application.EditProduct) *UpdateProductByIDController {
-	return &UpdateProductByIDController{up:up}
+func NewUpdateProductByIDController(editProductUseCase *application.EditProduct) *UpdateProductByIDController {
+	return &UpdateProductByIDController{editProductUseCase: editProductUseCase}
 }
 
 func (up_c *UpdateProductByIDController) Execute(c *gin.Context) {
-	var req UpdateProductRequest
+	// Obtener el id del parámetro de la URL
+	productID := c.Param("id")
+	if productID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product ID is required"})
+		return
+	}
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	// Deserializar el cuerpo de la solicitud
+	var updateProduct entities.Product
+	if err := c.ShouldBindJSON(&updateProduct); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
 
-	updateProduct := entities.Product {
-		Id: req.Id,
-		Name: req.Name,
-		Price: req.Price,
-	}
-
-	err := up_c.up.Execute(&updateProduct)
+	// Convertir el id de string a int
+	id, err := strconv.Atoi(productID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update product", "id": updateProduct.Id})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Product ID"})
 		return
 	}
 
-	
-	c.JSON(http.StatusOK, gin.H{"succesful": "Updated product", "id": req.Id})
+	// Usar el ID del producto para actualizar
+	updateProduct.Id = id
+
+	// Llamar al caso de uso para editar el producto
+	err = up_c.editProductUseCase.Execute(&updateProduct) // Usamos 'editProductUseCase' aquí
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update product"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Product updated successfully"})
 }
