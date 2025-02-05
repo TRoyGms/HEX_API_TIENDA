@@ -12,6 +12,7 @@ func AttachProductRoutes(
 	deleteProductByIDController *infrastructure.DeleteProductByIDController,
 	getAllProductsController *infrastructure.GetAllProductController,
 	updateProductByIdController *infrastructure.UpdateProductByIDController,
+	getProductByIDController *infrastructure.GetProductByIDController, 
 ) {
 	productsGroup := r.Group("/products")
 	{
@@ -19,5 +20,6 @@ func AttachProductRoutes(
 		productsGroup.DELETE("/:id", deleteProductByIDController.Execute)
 		productsGroup.GET("", getAllProductsController.Execute)
 		productsGroup.PUT("/:id", updateProductByIdController.Execute)
+		productsGroup.GET("/:id", getProductByIDController.Execute) 
 	}
 }

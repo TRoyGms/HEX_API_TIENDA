@@ -21,6 +21,7 @@ func NewProductsDependencies(db *sql.DB) *ProductsDependencies {
 func (d *ProductsDependencies) Execute(r *gin.Engine) {
 	productRepository := productRepositories.NewProductRepository(d.DB)
 
+	// Use cases y controladores existentes
 	createProductUseCase := application.NewCreateProduct(*productRepository)
 	createProductController := productInfra.NewCreateProductController(*createProductUseCase)
 
@@ -33,11 +34,15 @@ func (d *ProductsDependencies) Execute(r *gin.Engine) {
 	updateProductsByIDUseCase := application.NewEditProduct(*productRepository)
 	updateProductsByIDController := productInfra.NewUpdateProductByIDController(updateProductsByIDUseCase)
 
+	getProductByIDUseCase := application.NewViewProductByIDUseCase(productRepository)
+	getProductByIDController := productInfra.NewGetProductByIDController(getProductByIDUseCase)
+
 	productRouters.AttachProductRoutes(
 		r,
 		createProductController,
 		deleteProductByIDController,
 		getAllProductController,
 		updateProductsByIDController,
+		getProductByIDController,
 	)
 }
