@@ -28,9 +28,6 @@ func (d *ServicesDependencies) Execute(r *gin.Engine) {
 	deleteServiceUseCase := application.NewDeleteServiceUseCase(serviceRepository)
 	deleteServiceController := serviceInfra.NewDeleteServiceController(deleteServiceUseCase)
 
-	viewServiceByIDUseCase := application.NewViewServiceByIDUseCase(serviceRepository)
-	getServiceByIDController := serviceInfra.NewGetServiceByIDController(viewServiceByIDUseCase)
-
 	viewAllServicesUseCase := application.NewViewAllServicesUseCase(serviceRepository)
 	getAllServicesController := serviceInfra.NewGetAllServicesController(viewAllServicesUseCase)
 
@@ -43,7 +40,6 @@ func (d *ServicesDependencies) Execute(r *gin.Engine) {
 		createServiceController,
 		deleteServiceController,
 		updateServiceController,
-		getServiceByIDController,
 		getAllServicesController,
 	)
 }
